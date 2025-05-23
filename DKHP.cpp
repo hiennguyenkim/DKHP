@@ -4,48 +4,45 @@
 #include <algorithm>
 using namespace std;
 
-// Khai báo trước các lớp để tránh lỗi biên dịch do tham chiếu lẫn nhau
+// Khai báo lớp 
 class HocPhan;
 class NguoiDung;
 class SinhVien;
 class GiangVien;
 class HeThongDKHP;
 
-// Lớp cơ sở trừu tượng NguoiDung, đại diện cho người dùng chung (sinh viên hoặc giảng viên)
+// Lớp cơ sở trừu tượng NguoiDung
 class NguoiDung {
 protected:
-    string ma;        // Mã định danh người dùng (mã sinh viên hoặc mã giảng viên)
+    string ma;        // Mã người dùng 
     string hoTen;     // Họ và tên người dùng
     string matKhau;   // Mật khẩu để đăng nhập
 public:
-    // Constructor khởi tạo với giá trị mặc định
+    // Khởi tạo với giá trị mặc định
     NguoiDung(string _ma = "ma", string _hoTen = "hoTen", string _matKhau = "matKhau");
     // Destructor ảo để đảm bảo giải phóng tài nguyên cho lớp con
     virtual ~NguoiDung();
-    // Getter và setter cho các thuộc tính
+    // Get và set cho các thuộc tính
     string getMa() const;
     void setMa(string _ma);
     string getHoTen() const;
     void setHoTen(string _hoTen);
     string getMatKhau() const;
     void setMatKhau(string _matKhau);
-    // Phương thức thuần ảo để thực hiện hành động (đa hình)
+    // Phương thức thuần ảo để thực hiện hành động
     virtual bool ThucHien(HocPhan* hocPhan) = 0;
-    // Phương thức thuần ảo để kiểm tra đăng nhập (đa hình)
+    // Phương thức thuần ảo để kiểm tra đăng nhập
     virtual bool DangNhap(string inputMa, string inputMk) const = 0;
 };
 
-// Constructor của NguoiDung, gán giá trị cho các thuộc tính
+// Triển khai lớp NguoiDungNguoiDung
 NguoiDung::NguoiDung(string _ma, string _hoTen, string _matKhau) {
     ma = _ma;
     hoTen = _hoTen;
     matKhau = _matKhau;
 }
-
-// Destructor của NguoiDung, để trống vì không quản lý tài nguyên động
 NguoiDung::~NguoiDung() {}
 
-// Các phương thức getter và setter cho thuộc tính ma, hoTen, matKhau
 string NguoiDung::getMa() const { return ma; }
 void NguoiDung::setMa(string _ma) { ma = _ma; }
 string NguoiDung::getHoTen() const { return hoTen; }
@@ -55,18 +52,18 @@ void NguoiDung::setMatKhau(string _matKhau) { matKhau = _matKhau; }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
 
-// Lớp HocPhan, đại diện cho một học phần (môn học)
+// Lớp HocPhan, đại diện cho một học phần
 class HocPhan {
 private:
-    string maHocPhan;  // Mã học phần, định danh duy nhất
+    string maHocPhan;  // Mã học phần
     string tenHocPhan; // Tên học phần
     int soTinChi;      // Số tín chỉ của học phần
 public:
-    // Constructor khởi tạo học phần với giá trị mặc định
+    // Khởi tạo học phần với giá trị mặc định
     HocPhan(string _maHP = "maHP", string _tenHP = "tenHP", int stc = 1);
-    // Destructor để giải phóng tài nguyên
+    // Destructor 
     ~HocPhan();
-    // Getter và setter cho các thuộc tính
+    // Get và set cho các thuộc tính
     string getMaHocPhan() const;
     void setMaHocPhan(string _maHP);
     string getTenHocPhan() const;
@@ -82,17 +79,15 @@ public:
     bool operator==(const HocPhan& other) const;
 };
 
-// Constructor của HocPhan, gán giá trị cho các thuộc tính
+// Triển khai lớp HocPhan
 HocPhan::HocPhan(string _maHP, string _tenHP, int _stc) {
     maHocPhan = _maHP;
     tenHocPhan = _tenHP;
     soTinChi = _stc;
 }
 
-// Destructor của HocPhan, để trống vì không quản lý tài nguyên động
 HocPhan::~HocPhan() {}
 
-// Getter và setter cho các thuộc tính
 string HocPhan::getMaHocPhan() const { return maHocPhan; }
 void HocPhan::setMaHocPhan(string _maHP) { maHocPhan = _maHP; }
 string HocPhan::getTenHocPhan() const { return tenHocPhan; }
@@ -100,44 +95,40 @@ void HocPhan::setTenHocPhan(string _tenHP) { tenHocPhan = _tenHP; }
 int HocPhan::getSoTinChi() const { return soTinChi; }
 void HocPhan::setSoTinChi(int _stc) { soTinChi = _stc; }
 
-// Nạp chồng toán tử nhập để nhập thông tin học phần từ bàn phím
 istream& operator>>(istream& in, HocPhan& hp) {
     cout << "Nhap ma hoc phan: ";
     in >> hp.maHocPhan;
     cout << "Nhap ten hoc phan: ";
-    in.ignore(); // Xóa bộ đệm trước khi nhập chuỗi
+    in.ignore();
     getline(in, hp.tenHocPhan);
     cout << "Nhap so tin chi: ";
     in >> hp.soTinChi;
     return in;
 }
 
-// Nạp chồng toán tử xuất để hiển thị thông tin học phần
 ostream& operator<<(ostream& out, const HocPhan& hp) {
     out << "Ma HP: " << hp.maHocPhan << ", Ten HP: " << hp.tenHocPhan << ", So Tin Chi: " << hp.soTinChi;
     return out;
 }
 
-// Phương thức hiển thị thông tin học phần, sử dụng toán tử xuất
 void HocPhan::HienThiThongTin() const {
     cout << *this;
 }
 
-// So sánh hai học phần dựa trên mã học phần
 bool HocPhan::operator==(const HocPhan& other) const {
     return maHocPhan == other.maHocPhan;
 }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
 
-// Lớp SinhVien, kế thừa từ NguoiDung, đại diện cho sinh viên
+// Lớp SinhVien, kế thừa từ NguoiDung
 class SinhVien : public NguoiDung {
 private:
     vector<HocPhan*> danhSachHocPhanDaDangKy; // Danh sách con trỏ đến học phần đã đăng ký
 public:
-    // Constructor khởi tạo sinh viên, gọi constructor của lớp cha
+    // Khởi tạo sinh viên
     SinhVien(string _ma = "ma", string _hoTen = "hoTen", string _matKhau = "matKhau");
-    // Destructor để giải phóng tài nguyên
+    // Destructor
     ~SinhVien();
     // Ghi đè phương thức đăng nhập
     bool DangNhap(string inputMa, string inputMk) const override;
@@ -145,22 +136,20 @@ public:
     int TinhTongTinChi() const;
     // Ghi đè phương thức thực hiện (đăng ký học phần)
     bool ThucHien(HocPhan* hocPhan) override;
-    // Đăng ký một học phần
+    // Đăng ký học phần
     bool DangKyMonHoc(HocPhan* hp);
-    // Hủy đăng ký một học phần
+    // Hủy đăng ký học phần
     bool HuyDangKyMonHoc(string maHP);
     // Hiển thị danh sách học phần đã đăng ký
     void HienThiCacMonDaDangKy() const;
-    // Getter cho danh sách học phần đã đăng ký
+    // Get danh sách học phần đã đăng ký
     const vector<HocPhan*>& getDanhSachHocPhanDaDangKy() const { return danhSachHocPhanDaDangKy; }
 };
-
-// Constructor của SinhVien, gọi constructor của lớp cha NguoiDung
+// Triển khai lớp SinhVien
+// Constructor của SinhVien, gọi constructor của lớp NguoiDung
 SinhVien::SinhVien(string _ma, string _hoTen, string _matKhau) : NguoiDung(_ma, _hoTen, _matKhau) {}
 
-// Destructor của SinhVien, để trống vì danh sách học phần được quản lý bởi HeThongDKHP
 SinhVien::~SinhVien() {}
-
 // Kiểm tra thông tin đăng nhập của sinh viên
 bool SinhVien::DangNhap(string inputMa, string inputMk) const {
     return (this->ma == inputMa && this->matKhau == inputMk);
@@ -239,30 +228,31 @@ void SinhVien::HienThiCacMonDaDangKy() const {
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
 
-// Lớp GiangVien, kế thừa từ NguoiDung, đại diện cho giảng viên
+// Lớp GiangVien, kế thừa từ NguoiDung
 class GiangVien : public NguoiDung {
 private:
     string monPhuTrach; // Môn học mà giảng viên phụ trách
 public:
-    // Constructor khởi tạo giảng viên, gọi constructor của lớp cha
+    // Khởi tạo giảng viên
     GiangVien(string _ma = "ma", string _hoTen = "hoTen", string _matKhau = "matKhau", string _mon = "mon");
-    // Destructor để giải phóng tài nguyên
+    // Destructor 
     ~GiangVien();
     // Ghi đè phương thức đăng nhập
     bool DangNhap(string inputMa, string inputMk) const override;
     // Ghi đè phương thức thực hiện (mở lớp học phần)
     bool ThucHien(HocPhan* hocPhan) override;
-    // Getter và setter cho môn phụ trách
+    // Get và set cho môn phụ trách
     string getMonPhuTrach() const;
     void setMonPhuTrach(string _mon);
 };
 
-// Constructor của GiangVien, gọi constructor của lớp cha và gán môn phụ trách
+// Triển khai lớp GiangVien
+// Constructor của GiangVien, gọi constructor của lớp NguoiDung và gán môn phụ trách
 GiangVien::GiangVien(string _ma, string _hoTen, string _matKhau, string _mon)
     : NguoiDung(_ma, _hoTen, _matKhau), monPhuTrach(_mon) {
 }
 
-// Destructor của GiangVien, để trống vì không quản lý tài nguyên động
+// Destructor 
 GiangVien::~GiangVien() {}
 
 // Kiểm tra thông tin đăng nhập của giảng viên
@@ -280,22 +270,22 @@ bool GiangVien::ThucHien(HocPhan* hocPhan) {
     return false;
 }
 
-// Getter và setter cho môn phụ trách
+// Get và set cho môn phụ trách
 string GiangVien::getMonPhuTrach() const { return monPhuTrach; }
 void GiangVien::setMonPhuTrach(string _mon) { monPhuTrach = _mon; }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
 
-// Lớp HeThongDKHP, quản lý toàn bộ hệ thống đăng ký học phần
+// Lớp HeThongDKHP
 class HeThongDKHP {
 private:
     vector<SinhVien*> danhSachSinhVien;      // Danh sách con trỏ đến sinh viên
     vector<GiangVien*> danhSachGiangVien;    // Danh sách con trỏ đến giảng viên
     vector<HocPhan*> danhSachHocPhanHeThong; // Danh sách con trỏ đến học phần
 public:
-    // Constructor khởi tạo hệ thống
+    // Khởi tạo hệ thống
     HeThongDKHP();
-    // Destructor giải phóng tài nguyên
+    // Destructor 
     ~HeThongDKHP();
     // Khởi tạo dữ liệu mẫu
     void KhoiTao();
@@ -329,10 +319,11 @@ public:
     bool MoLopHocPhanBoiGiangVien(string maGV, string maHocPhan);
 };
 
-// Constructor của HeThongDKHP, để trống vì khởi tạo danh sách rỗng
+//Triển khai lớp HeThongDKHP
+// Constructor của HeThongDKHP
 HeThongDKHP::HeThongDKHP() {}
 
-// Destructor của HeThongDKHP, giải phóng tài nguyên động
+// Destructor của HeThongDKHP
 HeThongDKHP::~HeThongDKHP() {
     for (SinhVien* sv : danhSachSinhVien) {
         delete sv; // Giải phóng từng sinh viên
@@ -383,17 +374,17 @@ void HeThongDKHP::ThemSinhVien(SinhVien* sv) {
     }
 }
 
-// Tìm sinh viên theo mã, trả về con trỏ hoặc nullptr nếu không tìm thấy
+// Tìm sinh viên theo mã
 SinhVien* HeThongDKHP::TimSinhVien(string maSV) {
     for (SinhVien* sv : danhSachSinhVien) {
         if (sv->getMa() == maSV) {
             return sv;
         }
     }
-    return nullptr;
+    return nullptr; // Trả về nullptr nếu không tìm thấy
 }
 
-// Thêm giảng viên vào hệ thống, kiểm tra mã trùng lặp
+// Thêm giảng viên vào hệ thống
 void HeThongDKHP::ThemGiangVien(GiangVien* gv) {
     if (gv) {
         for (const auto* existing_gv : danhSachGiangVien) {
@@ -408,14 +399,14 @@ void HeThongDKHP::ThemGiangVien(GiangVien* gv) {
     }
 }
 
-// Tìm giảng viên theo mã, trả về con trỏ hoặc nullptr nếu không tìm thấy
+// Tìm giảng viên theo mã
 GiangVien* HeThongDKHP::TimGiangVien(string maGV) {
     for (GiangVien* gv : danhSachGiangVien) {
         if (gv->getMa() == maGV) {
             return gv;
         }
     }
-    return nullptr;
+    return nullptr; // Trả về nullptr nếu không tìm thấy
 }
 
 // Xử lý đăng nhập, kiểm tra mã và mật khẩu cho sinh viên hoặc giảng viên
@@ -457,14 +448,14 @@ void HeThongDKHP::ThemHocPhanVaoHeThong(HocPhan* hp) {
     }
 }
 
-// Tìm học phần theo mã, trả về con trỏ hoặc nullptr nếu không tìm thấy
+// Tìm học phần theo mã
 HocPhan* HeThongDKHP::TimHocPhanTrongHeThong(string maHP) {
     for (HocPhan* hp : danhSachHocPhanHeThong) {
         if (hp->getMaHocPhan() == maHP) {
             return hp;
         }
     }
-    return nullptr;
+    return nullptr; // Trả về nullptr nếu không tìm thấy
 }
 
 // Hiển thị danh sách tất cả học phần trong hệ thống
@@ -643,7 +634,7 @@ void HeThongDKHP::HienThiMenuChinh() {
             HienThiTatCaHocPhanTrongHeThong(); // Hiển thị học phần cho khách
             break;
         case 0:
-            cout << "Thoat chuong trinh. Cam on ban da su dung!" << endl; // Thoát
+            cout << "Thoat chuong trinh. Cam on ban da su dung!" << endl; 
             break;
         default:
             if (luaChon != -1)
@@ -652,7 +643,6 @@ void HeThongDKHP::HienThiMenuChinh() {
     } while (luaChon != 0);
 }
 
-// Hàm main, điểm bắt đầu của chương trình
 int main() {
     HeThongDKHP heThong; // Tạo đối tượng hệ thống
     heThong.KhoiTao();    // Khởi tạo dữ liệu mẫu
