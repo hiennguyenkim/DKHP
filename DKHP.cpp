@@ -29,6 +29,11 @@ public:
     void setHoTen(string _hoTen);
     string getMatKhau() const;
     void setMatKhau(string _matKhau);
+
+    // Nạp chồng toán tử nhập/xuất để nhập/xuất thông tin người dùng
+    friend istream& operator>>(istream& in, NguoiDung& nd);
+    friend ostream& operator<<(ostream& out, const NguoiDung& nd);
+
     // Phương thức thuần ảo để thực hiện hành động
     virtual bool ThucHien(HocPhan* hocPhan) = 0;
     // Phương thức thuần ảo để kiểm tra đăng nhập
@@ -49,6 +54,22 @@ string NguoiDung::getHoTen() const { return hoTen; }
 void NguoiDung::setHoTen(string _hoTen) { hoTen = _hoTen; }
 string NguoiDung::getMatKhau() const { return matKhau; }
 void NguoiDung::setMatKhau(string _matKhau) { matKhau = _matKhau; }
+
+istream& operator>>(istream& in, NguoiDung& nd) {
+    cout << "Nhap ma nguoi dung: ";
+    in >> nd.ma;
+    cout << "Nhap ho ten: ";
+    in.ignore();
+    getline(in, nd.hoTen);
+    cout << "Nhap mat khau: ";
+    in >> nd.matKhau;
+    return in;
+}
+
+ostream& operator<<(ostream& out, const NguoiDung& nd) {
+    out << "Ma: " << nd.ma << ", Ho ten: " << nd.hoTen;
+    return out;
+}
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -130,6 +151,11 @@ public:
     SinhVien(string _ma = "ma", string _hoTen = "hoTen", string _matKhau = "matKhau");
     // Destructor
     ~SinhVien();
+
+    // Nạp chồng toán tử nhập/xuất để nhập/xuất thông tin sinh viên
+    friend istream& operator>>(istream& in, SinhVien& sv);
+    friend ostream& operator<<(ostream& out, const SinhVien& sv);
+
     // Ghi đè phương thức đăng nhập
     bool DangNhap(string inputMa, string inputMk) const override;
     // Tính tổng số tín chỉ của các học phần đã đăng ký
@@ -145,11 +171,25 @@ public:
     // Get danh sách học phần đã đăng ký
     const vector<HocPhan*>& getDanhSachHocPhanDaDangKy() const { return danhSachHocPhanDaDangKy; }
 };
+
 // Triển khai lớp SinhVien
 // Constructor của SinhVien, gọi constructor của lớp NguoiDung
 SinhVien::SinhVien(string _ma, string _hoTen, string _matKhau) : NguoiDung(_ma, _hoTen, _matKhau) {}
 
 SinhVien::~SinhVien() {}
+
+istream& operator>>(istream& in, SinhVien& sv) {
+    in >> static_cast<NguoiDung&>(sv); // Gọi operator>> của lớp NguoiDung
+    return in;
+}
+
+ostream& operator<<(ostream& out, const SinhVien& sv) {
+    out << static_cast<const NguoiDung&>(sv); // Gọi operator<< của lớp NguoiDung
+    out << ", So mon da dang ky: " << sv.danhSachHocPhanDaDangKy.size();
+    out << ", Tong tin chi: " << sv.TinhTongTinChi();
+    return out;
+}
+
 // Kiểm tra thông tin đăng nhập của sinh viên
 bool SinhVien::DangNhap(string inputMa, string inputMk) const {
     return (this->ma == inputMa && this->matKhau == inputMk);
@@ -237,6 +277,11 @@ public:
     GiangVien(string _ma = "ma", string _hoTen = "hoTen", string _matKhau = "matKhau", string _mon = "mon");
     // Destructor 
     ~GiangVien();
+
+    // Nạp chồng toán tử nhập/xuất để nhập/xuất thông tin sinh viên
+    friend istream& operator>>(istream& in, GiangVien& gv);
+    friend ostream& operator<<(ostream& out, const GiangVien& gv);
+
     // Ghi đè phương thức đăng nhập
     bool DangNhap(string inputMa, string inputMk) const override;
     // Ghi đè phương thức thực hiện (mở lớp học phần)
@@ -254,6 +299,20 @@ GiangVien::GiangVien(string _ma, string _hoTen, string _matKhau, string _mon)
 
 // Destructor 
 GiangVien::~GiangVien() {}
+
+istream& operator>>(istream& in, GiangVien& gv) {
+    in >> static_cast<NguoiDung&>(gv); // Gọi operator>> của lớp NguoiDung
+    cout << "Nhap mon phu trach: ";
+    in.ignore();
+    getline(in, gv.monPhuTrach);
+    return in;
+}
+
+ostream& operator<<(ostream& out, const GiangVien& gv) {
+    out << static_cast<const NguoiDung&>(gv); // Gọi operator<< của lớp NguoiDung
+    out << ", Mon phu trach: " << gv.monPhuTrach;
+    return out;
+}
 
 // Kiểm tra thông tin đăng nhập của giảng viên
 bool GiangVien::DangNhap(string inputMa, string inputMk) const {
@@ -287,6 +346,7 @@ public:
     HeThongDKHP();
     // Destructor 
     ~HeThongDKHP();
+
     // Khởi tạo dữ liệu mẫu
     void KhoiTao();
     // Hiển thị menu chính
@@ -634,7 +694,7 @@ void HeThongDKHP::HienThiMenuChinh() {
             HienThiTatCaHocPhanTrongHeThong(); // Hiển thị học phần cho khách
             break;
         case 0:
-            cout << "Thoat chuong trinh. Cam on ban da su dung!" << endl; 
+            cout << "Thoat chuong trinh. Cam on ban da su dung!" << endl;
             break;
         default:
             if (luaChon != -1)
